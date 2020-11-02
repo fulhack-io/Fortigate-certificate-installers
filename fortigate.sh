@@ -31,13 +31,13 @@ set prompt "#"
 set timeout 2
 
 #Check if certificate is created
-if {[file exists certs/$certname/privkey.pem] == 0} {
-	send_user "Certificate file certs/$certname/privkey.pem not found. script stopped.\n"
+if {[file exists /etc/letsencrypt/live/$certname/privkey.pem] == 0} {
+	send_user "Certificate file /etc/letsencrypt/live/$certname/privkey.pem not found. script stopped.\n"
 	exit 1
 }
 #Read ExpiryDates from certificates and compare them..
 set livecertdate [exec echo | openssl s_client -showcerts -connect $host:$sslport 2>/dev/null | openssl x509 -noout -enddate | cut -d = -f 2 ]
-set filecertdate [exec echo | openssl x509 -in certs/$certname/cert.pem -noout -dates | grep notAfter | cut -d = -f 2 ]
+set filecertdate [exec echo | openssl x509 -in /etc/letsencrypt/live/$certname/cert.pem -noout -dates | grep notAfter | cut -d = -f 2 ]
 set livecertUTC [clock scan $livecertdate -format "%b %d %H:%M:%S %Y %Z" ]
 set filecertUTC [clock scan $filecertdate -format "%b %d %H:%M:%S %Y %Z" ]
 # format Jun 16 04:08:00 2019 GMT
@@ -50,11 +50,11 @@ if { [expr {$livecertUTC >= $filecertUTC}] } {
 }
 
 #Create hashed private key (stderr info redirected to stdout as openssl outputs informational info to stderr..)
-exec openssl rsa -des3 -passout pass:$certpass -in certs/$certname/privkey.pem -out certs/$certname/encrprivkey.pem 2>&1
+exec openssl rsa -des3 -passout pass:$certpass -in /etc/letsencrypt/live/$certname/privkey.pem -out /etc/letsencrypt/live/$certname/encrprivkey.pem 2>&1
 # Open the new certificates.
-set fpk [open "certs/$certname/encrprivkey.pem" r]
+set fpk [open "/etc/letsencrypt/live/$certname/encrprivkey.pem" r]
 set priv_key [read $fpk]
-set fcrt [open "certs/$certname/cert.pem" r]
+set fcrt [open "/etc/letsencrypt/live/$certname/fullchain.pem" r]
 set certificate [read $fcrt]
 set fgcertname [clock format [clock seconds] -format {%Y%m}]
 
