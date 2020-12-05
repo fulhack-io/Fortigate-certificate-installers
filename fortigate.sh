@@ -5,10 +5,8 @@
 #  jan 2017 v0.1 initial release
 #  jun 2019 v0.2 Updated certificate check with real date comparison
 #                Option to remove ssh key after update
+#  December 2020, make it work with Letsencrypt and Cloudflare
 #
-# Dependencies:
-#   * certificate's created by dehydrated (Let's Encrypt)
-#   * sending email with sendEmail. (http://caspian.dotconf.net/menu/Software/SendEmail/)
 #
 # Usage: fortigate.sh <configfile> (if not fortigate.conf)
 
